@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	
+	<!-- 컴포넌트 스캔 -->
+	<context:component-scan base-package="com.springbook.biz"/>
+	
+	<!-- 2번 AOP 설정 방법 : 어노테이션 활용 -->
+	<aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+	
+	<!-- 1번 AOP 설정 방법 : xml 파일 설정
+	<bean class="com.springbook.biz.common.LogAdvice" id="log"></bean>
+	<bean class="com.springbook.biz.common.Log4jAdvice" id="log"></bean>
+	<bean class="com.springbook.biz.common.BeforeAdvice" id="before"></bean>
+	<bean class="com.springbook.biz.common.AfterThrowingAdvice" id="afterThrowing"></bean>
+	<bean class="com.springbook.biz.common.AfterReturningAdvice" id="afterReturning"></bean>
+	<bean class="com.springbook.biz.common.AfterAdvice" id="after"></bean>
+	<bean class="com.springbook.biz.common.AroundAdvice" id="around"></bean>
+	
+	1. 포인트컷 표현식 - 포인트컷의 범위를 한정
+	* com.springbook.biz..*Impl.*(..)
+	리턴타입  패키지명 ..(모든 단계의 패키지) 클래스명 메소드명()
+	
+	<aop:config>
+		<aop:pointcut expression="execution(* com.springbook.biz..*Impl.*(..))" id="allPointcut"/>
+		<aop:pointcut expression="execution(* com.springbook.biz..*Impl.get*(..))" id="getPointcut"/>
+		<aop:aspect ref="around">
+			<aop:around pointcut-ref="getPointcut" method="aroundLog"/>
+		</aop:aspect>
+	</aop:config>
+	-->
+
+	<!-- DataSource 설정 1번 방법 : setter 인젝션
+	<bean class="org.apache.commons.dbcp.BasicDataSource" id="dataSource" destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property>
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"></property>
+		<property name="username" value="human01"></property>
+		<property name="password" value="1234"></property>
+	</bean>
+	-->
+
+	<!-- DataSource 설정 2번 방법 : 설정 파일 따로 관리 -->
+	<context:property-placeholder location="classpath:config/database.properties"/>
+	
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver}"></property>
+		<property name="url" value="${jdbc.url}"></property>
+		<property name="username" value="${jdbc.username}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+	</bean>
+	
+	<!-- JdbcTemplate 객체를 빈으로 등록 -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- 트랜잭션(transaction) 관리 객체 설정 -->
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- 트랜잭션 어드바이스 설정 -->
+	<!-- read-only="true" : 트랜잭션 관리 메소드 제외 -->
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="get*" read-only="true"/>
+			<tx:method name="*"/>
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- 트랜잭션 AOP 설정 -->
+<!-- 	<aop:config>
+		<aop:pointcut id="txPointcut" expression="execution(* com.springbook.biz..*Impl.*(..))"/>
+		<aop:advisor pointcut-ref="txPointcut" advice-ref="txAdvice"/>
+	</aop:config> -->
+	
+</beans>

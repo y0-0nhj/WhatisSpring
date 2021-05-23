@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+	<!-- ### 1. xml 방식 ### -->
+	<!-- 빈 등록 -->
+	<!-- init-method="initMethod" : 초기화 작업 -->
+	<!-- destroy-method="destroyMethod" : 마무리 작업 -->
+	<!-- lazy-init="true" : 빈생성 시기를 코드를 사용하는 시점으로 변경, 이 옵션이 없으면 즉시 로딩 -->
+	<!-- scope="singleton" : 디폴트, scope="prototype" : 매번 새로운 인스턴스를 생성-->
+	
+	<!-- 1. 생성자 인젝션 : 생성자 오버로딩 활용 -->
+<!-- 	<bean class="polymorphism.SamsungTV" id="tv">
+		<constructor-arg ref="sony"></constructor-arg>
+		<constructor-arg value="2500000"></constructor-arg>
+	</bean> -->
+	
+	<!-- 2. 세터 인젝션 : 세터 메소드 활용 -->
+<!-- 	<bean class="polymorphism.LgTV" id="tv">
+		<property name="speaker" ref="apple"></property>
+		<property name="price" value="2500000"></property>
+	</bean> -->
+	
+	<!-- 3. 세터 인젝션 : p 네임스페이스를 활용 -->
+<!-- 	<bean class="polymorphism.SamsungTV" id="tv" p:speaker-ref="sony" p:price="2500000"/>
+	
+	<bean class="polymorphism.AppleSpeaker" id="apple"></bean>
+	<bean class="polymorphism.SonySpeaker" id="sony"></bean> -->
+
+	<!-- ### 2. 어노테이션 방식 ### -->
+	<!-- 과도한 xml 설정으로 인해 부담 -> 어노테이션 활용 -->
+	
+	<!-- ### 3. xml과 어노테이션 방식의 병행 -->
+	<!-- 소스코드에 어노테이션으로 설정 : 한번 설정하면 거의 변경이 없은 객체 -->
+	<!-- xml 파일에 설정 : 자주 변경이 일어나는 객체 -->
+	<context:component-scan base-package="polymorphism"/>
+	<bean class="polymorphism.SonySpeaker" id="sony"></bean>
+	<bean class="polymorphism.AppleSpeaker" id="apple"></bean>
+	
+	<!-- ### 세터 인젝션의 추가 내용 ### -->
+	
+		<!-- 4. 세터 인젝션 : 컬렉션의 리스트가 멤버변수인 경우 -->
+<!-- 	<bean class="polymorphism.CollectionBean" id="collectionBean">
+		<property name="addressList">
+			<list>
+				<value>서울시 강남구 역삼동</value>
+				<value>서울시 성동구 행당동</value>
+				<value>서울시 영등포구 여의도동</value>
+				<value>서울시 중구 중랑동</value>
+				<value>서울시 마포구 합정동</value>
+			</list>
+		</property>
+	</bean> -->
+	
+	<!-- 5. 세터 인젝션 : 컬렉션의 셋이 멤버변수인 경우 -->
+<!-- 	<bean class="polymorphism.CollectionBean" id="collectionBean">
+		<property name="addressSet">
+			<set>
+				<value>서울시 강남구 역삼동</value>
+				<value>서울시 성동구 행당동</value>
+				<value>서울시 영등포구 여의도동</value>
+				<value>서울시 중구 중랑동</value>
+				<value>서울시 마포구 합정동</value>
+			</set>
+		</property>
+	</bean> -->
+	
+	<!-- 6. 세터 인젝션 : 컬렉션의 맵이 멤버변수인 경우 -->
+	<!-- <bean class="polymorphism.CollectionBean" id="collectionBean">
+		<property name="addressMap">
+			<map>
+				<entry>
+					<key><value>이익준</value></key>
+					<value>서울시 강남구 역삼동</value>
+				</entry>
+				<entry>
+					<key><value>김준완</value></key>
+					<value>서울시 성동구 행당동</value>
+				</entry>
+				<entry>
+					<key><value>채송화</value></key>
+					<value>서울시 영등포구 여의도동</value>
+				</entry>
+				<entry>
+					<key><value>안정원</value></key>
+					<value>서울시 중구 중랑동</value>
+				</entry>
+				<entry>
+					<key><value>양석형</value></key>
+					<value>서울시 마포구 합정동</value>
+				</entry>
+			</map>
+		</property>
+	</bean> -->
+	
+	<!-- 7. 세터 인젝션 : 컬렉션 프로터티즈가 멤버변수인 경우 -->
+<!-- 	<bean class="polymorphism.CollectionBean" id="collectionBean">
+		<property name="addressProp">
+			<props>
+				<prop key="이익준">서울시 강남구 역삼동</prop>
+				<prop key="김준완">서울시 성동구 행당동</prop>
+				<prop key="채송화">서울시 영등포구 여의도동</prop>
+				<prop key="안정원">서울시 중구 중랑동</prop>
+				<prop key="양석형">서울시 마포구 합정동</prop>
+			</props>
+		</property>
+	</bean> -->
+	
+</beans>
